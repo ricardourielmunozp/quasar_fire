@@ -1,9 +1,6 @@
 package com.starwars.ml.quasar_fire.service.impl;
 
-import com.starwars.ml.quasar_fire.entity.CoordinatesEntity;
-import com.starwars.ml.quasar_fire.entity.ReciverEntity;
-import com.starwars.ml.quasar_fire.entity.SateliteEntity;
-import com.starwars.ml.quasar_fire.entity.TransportEntity;
+import com.starwars.ml.quasar_fire.entity.*;
 import com.starwars.ml.quasar_fire.exception.DarkSideException;
 import com.starwars.ml.quasar_fire.service.ICalculationService;
 import com.starwars.ml.quasar_fire.service.ILocationService;
@@ -26,35 +23,39 @@ public class CalculationService implements ICalculationService {
     private final String satDot = "satellites.";
     private final String dotPos = ".position";
     private TransportEntity transport;
-    private SateliteEntity globalSatelites;
+    private SateliteEntity globalSatelites = new SateliteEntity();
 
     @Value("${sateliteNames}")
     private String[] sateliteArray;
 
+
     @Override
     public void calculation(RequestEntity requestEntity) throws DarkSideException {
-
          globalSatelites = (SateliteEntity)requestEntity.getBody();
-        validations(globalSatelites);
-        savePositions(globalSatelites);
-        double[] points  = locationService.location(globalSatelites.getPositions() ,globalSatelites.getDistances());
-        CoordinatesEntity coordinates =  new CoordinatesEntity(points);
-        transport = new TransportEntity(coordinates,"");
     }
 
     @Override
-    public void calculationReciver(RequestEntity requestEntity) throws DarkSideException {
-
-        ReciverEntity reciver = (ReciverEntity)requestEntity.getBody();
+    public void calculationReciver(String name,RequestEntity requestEntity) throws DarkSideException {
+        Satellite reciver = (Satellite)requestEntity.getBody();
+        reciver.setName(name);
         globalSatelites.updateReciver(reciver);
-        if(!(globalSatelites.getMessages().size() < 2)) {
-            return;
-        }
+    }
+
+    @Override
+    public ShipEntity getLocation() throws DarkSideException{
+
+        if(globalSatelites == null || globalSatelites.getMessages().size() < 2)
+            throw new DarkSideException(environment.getProperty("error.msj.incomplete"));
 
         savePositions(globalSatelites);
+        if( (globalSatelites.getPositions().length < 2) || (globalSatelites.getDistances().length < 2) )
+            throw new DarkSideException(environment.getProperty("error.sat.incomplete")   );
+
+
         double[] points  = locationService.location(globalSatelites.getPositions() ,globalSatelites.getDistances());
         CoordinatesEntity coordinates =  new CoordinatesEntity(points);
-        transport = new TransportEntity(coordinates,"");
+
+        return new TransportEntity(coordinates, "");
     }
 
     private void savePositions(SateliteEntity satelliteEntity){
@@ -62,7 +63,7 @@ public class CalculationService implements ICalculationService {
             int numberSat = Integer.parseInt(environment.getProperty("satellites.numbers"));
             double[][] pointsList = new double[numberSat][];
             String[] satellitePos;
-            for (int i = 0; i < satelliteEntity.getRecivers().size(); i++) {
+            for (int i = 0; i < satelliteEntity.getSatellites().size(); i++) {
                 satellitePos = environment.getProperty(satDot + i + dotPos).split(",");
                 pointsList[i] = Arrays.stream(satellitePos)
                         .map(Double::valueOf)

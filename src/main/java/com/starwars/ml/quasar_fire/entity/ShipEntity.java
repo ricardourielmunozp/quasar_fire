@@ -2,13 +2,13 @@ package com.starwars.ml.quasar_fire.entity;
 
 public class ShipEntity {
 
-    private CoordinatesEntity coordinatesEntity;
+    private CoordinatesEntity position;
 
-    public CoordinatesEntity getCoordinates() {
-        return coordinatesEntity;
+    public CoordinatesEntity getPosition() {
+        return position;
     }
 
-    public void setCoordinates(CoordinatesEntity coordinatesEntity) {
-        this.coordinatesEntity = coordinatesEntity;
+    public void setPosition(CoordinatesEntity coordinatesEntity) {
+        this.position = coordinatesEntity;
     }
 }

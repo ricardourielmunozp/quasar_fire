@@ -2,7 +2,7 @@ package com.starwars.ml.quasar_fire.entity;
 
 import java.util.List;
 
-public class ReciverEntity extends ShipEntity {
+public class Satellite extends ShipEntity {
 
     private String name;
     private double distance;

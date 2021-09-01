@@ -18,34 +18,35 @@ public class SateliteEntity {
     @Autowired
     private Environment environment;
 
-    private List<ReciverEntity> recivers;
+
+    private List<Satellite> satellites = new ArrayList<Satellite>();
 
     private final String satDot = "satellites.";
     private final String dotPos = ".name";
 
-    public List<ReciverEntity> getRecivers() {
-        return recivers;
+    public List<Satellite> getSatellites() {
+        return satellites;
     }
 
-    public void setRecivers(List<ReciverEntity> recivers) {
-        this.recivers = recivers;
+    public void setSatellites(List<Satellite> satellites) {
+        this.satellites = satellites;
     }
 
     public double[] getDistances(){
 
-        double [] distances = new double[recivers.size()];
-        for(int i = 0; i < recivers.size(); i ++){
-            distances[i] = recivers.get(i).getDistance();
+        double [] distances = new double[satellites.size()];
+        for(int i = 0; i < satellites.size(); i ++){
+            distances[i] = satellites.get(i).getDistance();
         }
         return  distances;
     }
 
     public double[][] getPositions(){
-        double [][] positions = new double[recivers.size()][];
+        double [][] positions = new double[satellites.size()][];
         String[] points;
-        for(int i = 0; i < recivers.size(); i ++){
-            if(recivers.get(i).getCoordinates() != null) {
-                points = recivers.get(i).getCoordinates().toString().split(",");
+        for(int i = 0; i < satellites.size(); i ++){
+            if(satellites.get(i).getPosition() != null) {
+                points = satellites.get(i).getPosition().toString().split(",");
                 positions[i] = Arrays.stream(points)
                         .map(Double::valueOf)
                         .mapToDouble(Double::doubleValue)
@@ -59,23 +60,27 @@ public class SateliteEntity {
         CoordinatesEntity position;
         for(int i = 0; i < pointsList.length; i++){
             position = new CoordinatesEntity(pointsList[i]);
-            recivers.get(i).setCoordinates(position);
+            satellites.get(i).setPosition(position);
         }
     }
 
     public List<List<String>> getMessages(){
         List<List<String>> messages = new ArrayList<>();
-        for(ReciverEntity s : recivers){
+        for(Satellite s : satellites){
             messages.add(s.getMessage());
         }
         return  messages;
     }
 
-    public void updateReciver(ReciverEntity rec){
+    public void updateReciver(Satellite rec){
         String searchName=rec.getName();
-        OptionalInt indexOpt = IntStream.range(0, recivers.size())
-                .filter(i -> searchName.equals(recivers.get(i)))
+        OptionalInt indexOpt = IntStream.range(0, satellites.size())
+                .filter(i -> searchName.equals(satellites.get(i).getName()))
                 .findFirst();
-        recivers.set(indexOpt.getAsInt(),rec);
+        if(indexOpt.isPresent()) {
+            satellites.set(indexOpt.getAsInt(), rec);
+        }else{
+            satellites.add(rec);
+        }
     }
 }

@@ -2,18 +2,18 @@ package com.starwars.ml.quasar_fire.entity;
 
 public class TransportEntity extends ShipEntity{
 
-    private String msj;
+    private String message;
 
     public TransportEntity(CoordinatesEntity coordinates, String msj){
-        this.setCoordinates(coordinates);
-        this.msj = msj;
+        this.setPosition(coordinates);
+        this.message = msj;
     }
 
-    public String getMsj() {
-        return msj;
+    public String getMessage() {
+        return message;
     }
 
-    public void setMsj(String msj) {
-        this.msj = msj;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
