@@ -35,8 +35,6 @@ public class MessageService implements IMessageService {
             s = msgList.get(i).size();
             msgList.set(i, msgList.get(i).subList(s-gapSize, s));
         }
-
-        //msgList.stream().forEach(s -> s.subList(s.size()-lagSize, s.size()));
     }
 
     @Override
@@ -51,7 +49,6 @@ public class MessageService implements IMessageService {
                 return  phrase + completeMessage(msgList);
             }
         }
-        //if(messages.get(0).size()>0)
         return "";
     }
 
