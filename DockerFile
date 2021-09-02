@@ -1,0 +1,4 @@
+FROM openjdk:8
+ADD target/quasar_fire.jar quasar_fire.jar
+EXPOSE 8006
+ENTRYPOINT ["java","-jar","quasar_fire.jar"]
