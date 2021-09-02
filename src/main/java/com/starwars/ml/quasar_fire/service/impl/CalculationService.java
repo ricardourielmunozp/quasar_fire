@@ -4,6 +4,7 @@ import com.starwars.ml.quasar_fire.entity.*;
 import com.starwars.ml.quasar_fire.exception.DarkSideException;
 import com.starwars.ml.quasar_fire.service.ICalculationService;
 import com.starwars.ml.quasar_fire.service.ILocationService;
+import com.starwars.ml.quasar_fire.service.IMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
@@ -16,6 +17,9 @@ public class CalculationService implements ICalculationService {
 
     @Autowired
     private ILocationService locationService;
+
+    @Autowired
+    private IMessageService messageService;
 
     @Autowired
     private Environment environment;
@@ -55,7 +59,7 @@ public class CalculationService implements ICalculationService {
         double[] points  = locationService.location(globalSatelites.getPositions() ,globalSatelites.getDistances());
         CoordinatesEntity coordinates =  new CoordinatesEntity(points);
 
-        return new TransportEntity(coordinates, "");
+        return new TransportEntity(coordinates, messageService.getMessage(globalSatelites.getMessages()));
     }
 
     private void savePositions(SateliteEntity satelliteEntity){
